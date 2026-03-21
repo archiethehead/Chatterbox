@@ -2,9 +2,8 @@
 #include <windows.h>
 #include <stdio.h>
 
-void recieveMessage(void* socketPtr) {
+void recieveMessage(SOCKET clientSocket) {
 
-	SOCKET clientSocket = *(SOCKET*)socketPtr;
 	char messageBuffer[1024];
 
 	while (1) {

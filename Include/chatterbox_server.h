@@ -2,12 +2,10 @@
 #include <windows.h>
 #include <process.h>
 
-#define MAX_CLIENTS 10
-
+int MAX_CLIENTS = 10;
 int clientCount = 0;
-SOCKET clientList[MAX_CLIENTS];
 
-CRITICAL_SECTION clientCriticalSection;
+SOCKET clientList[10];
 
 void clientListener(void *socketPtr) {
 
@@ -19,8 +17,6 @@ void clientListener(void *socketPtr) {
 		int recievedBytes = recv(clientSocket, messageBuffer, sizeof(messageBuffer), 0);
 
 		if (recievedBytes > 0) {
-		
-			EnterCriticalSection(&clientCriticalSection);
 
 			for (int i = 0; i < clientCount; i++) {
 			
@@ -31,8 +27,6 @@ void clientListener(void *socketPtr) {
 				}
 			
 			}
-
-			LeaveCriticalSection(&clientCriticalSection);
 		
 		}
 
@@ -59,8 +53,6 @@ void relay(void *listenSocketPtr) {
 		SOCKET newClientSocket = accept(listenSocket, (struct socketAddress*)&clientAddress, &addressLength);
 		
 		if (newClientSocket != INVALID_SOCKET) {
-		
-			EnterCriticalSection(&clientCriticalSection);
 
 			if (clientCount < MAX_CLIENTS) {
 			
@@ -76,17 +68,9 @@ void relay(void *listenSocketPtr) {
 				closesocket(newClientSocket);
 			
 			}
-
-			LeaveCriticalSection(&clientCriticalSection);
 		
 		}
 
 	}
-
-}
-
-void server_init() {
-
-	InitializeCriticalSection(&clientCriticalSection);
 
 }
