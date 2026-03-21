@@ -5,6 +5,8 @@
 int MAX_CLIENTS = 10;
 int clientCount = 0;
 
+CRITICAL_SECTION clientCriticalSection;
+
 SOCKET clientList[10];
 
 void clientListener(void *socketPtr) {
@@ -17,6 +19,8 @@ void clientListener(void *socketPtr) {
 		int recievedBytes = recv(clientSocket, messageBuffer, sizeof(messageBuffer), 0);
 
 		if (recievedBytes > 0) {
+			
+			EnterCriticalSection(&clientCriticalSection);
 
 			for (int i = 0; i < clientCount; i++) {
 			
@@ -27,6 +31,8 @@ void clientListener(void *socketPtr) {
 				}
 			
 			}
+
+			LeaveCriticalSection(&clientCriticalSection);
 		
 		}
 
@@ -43,6 +49,7 @@ void clientListener(void *socketPtr) {
 
 void relay(void *listenSocketPtr) {
 
+	InitializeCriticalSection(&clientCriticalSection);
 	SOCKET listenSocket = *(SOCKET*)listenSocketPtr;
 
 	while (1) {
@@ -55,17 +62,22 @@ void relay(void *listenSocketPtr) {
 		if (newClientSocket != INVALID_SOCKET) {
 
 			if (clientCount < MAX_CLIENTS) {
-			
+				
+				EnterCriticalSection(&clientCriticalSection);
+
 				clientList[clientCount] = newClientSocket;
 				clientCount++;
 				_beginthread(clientListener, 0, (void*)&newClientSocket);
 				printf("SERVER - New client connected, client count: %d", clientCount);
+
+				LeaveCriticalSection(&clientCriticalSection);
 			
 			}
 
 			else {
 			
 				closesocket(newClientSocket);
+				DeleteCriticalSection(&clientCriticalSection);
 			
 			}
 		

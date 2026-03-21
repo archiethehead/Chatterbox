@@ -6,10 +6,22 @@
 #include <windows.h>
 #include <process.h>
 
+// structs
+// pouinter wizardry
+// test pass on many machine
+// I <3 my GF
+
 void main() {
 
 	WSADATA wsaData;
-	WSAStartup(MAKEWORD(2, 2), &wsaData);
+	int success = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+	if (success != 0) {
+		
+		perror("ERROR:");
+		return -1;
+	
+	}
 
 	SOCKET checkHost = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	SOCKADDR_IN	serverAddress;
@@ -17,7 +29,7 @@ void main() {
 	inet_pton(AF_INET, "127.0.0.1", &serverAddress.sin_addr);
 	serverAddress.sin_port = htons(8888);
 
-	int check = connect(checkHost, (struct socketAddress*)&serverAddress, sizeof(serverAddress));
+	int check = connect(checkHost, (struct sockaddr_in*)&serverAddress, sizeof(serverAddress));
 
 	if (check == SOCKET_ERROR) {
 	
@@ -42,9 +54,11 @@ void main() {
 
 	}
 
-	connect(clientSocket, (struct socketAddress*)&serverAddress, sizeof(serverAddress));
+	connect(clientSocket, (struct sockaddr_in*)&serverAddress, sizeof(serverAddress));
 
-	_beginthread(recieveMessage, 0, clientSocket);
+
+	SOCKET* mallocSocket = malloc(sizeof(SOCKET));
+	_beginthread(recieveMessage, 0, mallocSocket);
 
 	while (1) {
 
@@ -55,6 +69,7 @@ void main() {
 
 	}
 
+	WSACleanup();
 
 	return 0;
 
