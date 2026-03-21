@@ -4,11 +4,9 @@
 #include <windows.h>
 #include <process.h>
 
-CRITICAL_SECTION clientCriticalSection;
+#define PORT 8888
 
 void main() {
-	
-	InitializeCriticalSection(&clientCriticalSection);
 
 	SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
