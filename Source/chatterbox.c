@@ -4,9 +4,12 @@
 #include <windows.h>
 #include <process.h>
 
-void main() {
+CRITICAL_SECTION clientCriticalSection;
 
+void main() {
 	
+	InitializeCriticalSection(&clientCriticalSection);
+
 	SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
 	if (!clientSocket) {
@@ -16,6 +19,14 @@ void main() {
 	}
 
 	_beginthread(recieveMessage, 0, (void*)clientSocket);
+
+	while (1) {
+
+		char messageBuffer[1024];
+		fgets(messageBuffer, 1024, stdin);
+		send(clientSocket, messageBuffer, strlen(messageBuffer), 0);
+
+	}
 
 
 	return 0;
