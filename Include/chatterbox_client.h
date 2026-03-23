@@ -2,17 +2,15 @@
 #include <windows.h>
 #include <stdio.h>
 
-void recieveMessage(void *newSocket) {
+void recieveMessage(SOCKET* newSocket) {
 
-	SOCKET clientSocket = *(SOCKET*)newSocket;
-	free(newSocket);
+	SOCKET clientSocket = *newSocket;
 
 	char messageBuffer[1024];
 
 	while (1) {
 
 		int recievedBytes = recv(clientSocket, messageBuffer, sizeof(messageBuffer), 0);
-		messageBuffer[recievedBytes] = "\0";
 
 		if (recievedBytes > 0) {
 

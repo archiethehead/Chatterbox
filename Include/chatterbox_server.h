@@ -1,4 +1,5 @@
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
 #include <process.h>
 
@@ -9,7 +10,9 @@ CRITICAL_SECTION clientCriticalSection;
 
 SOCKET clientList[10];
 
-void clientListener(void *socketPtr) {
+void clientListener(SOCKET *socketPtr) {
+
+	clientCount += 1;
 
 	SOCKET clientSocket = *(SOCKET*)socketPtr;
 	char messageBuffer[1024];
@@ -19,7 +22,7 @@ void clientListener(void *socketPtr) {
 		int recievedBytes = recv(clientSocket, messageBuffer, sizeof(messageBuffer), 0);
 
 		if (recievedBytes > 0) {
-			
+
 			EnterCriticalSection(&clientCriticalSection);
 
 			for (int i = 0; i < clientCount; i++) {
@@ -47,7 +50,7 @@ void clientListener(void *socketPtr) {
 
 }
 
-void relay(void *listenSocketPtr) {
+void relay(SOCKET* listenSocketPtr) {
 
 	InitializeCriticalSection(&clientCriticalSection);
 	SOCKET listenSocket = *(SOCKET*)listenSocketPtr;
@@ -55,9 +58,14 @@ void relay(void *listenSocketPtr) {
 	while (1) {
 	
 		SOCKADDR_IN clientAddress;
+
+		clientAddress.sin_family = AF_INET;
+		inet_pton(AF_INET, "127.0.0.1", &clientAddress.sin_addr);
+		clientAddress.sin_port = htons(8888);
+
 		int addressLength = sizeof(clientAddress);
 
-		SOCKET newClientSocket = accept(listenSocket, (struct socketAddress*)&clientAddress, &addressLength);
+		SOCKET newClientSocket = accept(listenSocket, (struct sockaddr_in*)&clientAddress, &addressLength);
 		
 		if (newClientSocket != INVALID_SOCKET) {
 
@@ -66,9 +74,7 @@ void relay(void *listenSocketPtr) {
 				EnterCriticalSection(&clientCriticalSection);
 
 				clientList[clientCount] = newClientSocket;
-				clientCount++;
-				_beginthread(clientListener, 0, (void*)&newClientSocket);
-				printf("SERVER - New client connected, client count: %d", clientCount);
+				_beginthread(clientListener, 0, &newClientSocket);
 
 				LeaveCriticalSection(&clientCriticalSection);
 			
