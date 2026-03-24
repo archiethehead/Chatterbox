@@ -3,17 +3,17 @@
 #include <windows.h>
 #include <process.h>
 
-int MAX_CLIENTS = 10;
+#define MAX_CLIENTS 10
+
 int clientCount = 0;
+SOCKET clientList[MAX_CLIENTS];
 
 CRITICAL_SECTION clientCriticalSection;
-
-SOCKET clientList[10];
 
 void clientListener(SOCKET *socketPtr) {
 
 	SOCKET clientSocket = *socketPtr;
-	char messageBuffer[1024];
+	char messageBuffer[5120];
 
 	while (1) {
 	

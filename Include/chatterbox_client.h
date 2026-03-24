@@ -6,11 +6,17 @@ void recieveMessage(SOCKET* newSocket) {
 
 	SOCKET clientSocket = *newSocket;
 
-	char messageBuffer[1024];
+	char messageBuffer[5120];
 
 	while (1) {
 
 		int recievedBytes = recv(clientSocket, messageBuffer, sizeof(messageBuffer), 0);
+
+		if (recievedBytes < 5120) {
+		
+			messageBuffer[recievedBytes] = 0x0;
+		
+		}
 
 		if (recievedBytes > 0) {
 

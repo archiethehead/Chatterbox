@@ -54,13 +54,21 @@ int main() {
 	}
 
 	_beginthread(recieveMessage, 0, &clientSocket);
+	system("cls");
 
 	while (1) {
 
-		printf("\n > ");
+		printf("\n\n > ");
 
-		char messageBuffer[1024];
-		fgets(messageBuffer, 1024, stdin);
+		char messageBuffer[5120];
+		fgets(messageBuffer, 5120, stdin);
+
+		if ((int)strlen(messageBuffer) > 5000) {
+		
+			printf("\n\nERROR: Messages are limited to 5000 characters.");
+			continue;
+		
+		}
 
 		int exit = strcmp(messageBuffer, "Exit\n");
 
