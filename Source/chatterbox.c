@@ -13,7 +13,25 @@
 // test pass on many machine
 // I <3 my GF
 
-int main() {
+int main(int argc, char *argv[]) {
+
+	int setName = strcmp(argv[1], "setname");
+
+	if (setName == 0  && argc > 1) {
+	
+		int success = SetEnvironmentVariableW((LPCWSTR)"ChatterBoxName", (LPCWSTR)argv[2]);
+
+		if (success == 0) {
+			
+			perror("ERROR: ");
+			return -1;
+		
+		}
+
+		printf("New name successfully set: %s", argv[2]);
+		return 0;
+	
+	}
 
 	WSADATA wsaData;
 	int success = WSAStartup(MAKEWORD(2, 2), &wsaData);
