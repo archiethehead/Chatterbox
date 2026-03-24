@@ -141,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\chatterbox_client.h" />
+    <ClInclude Include="Include\chatterbox_data.h" />
     <ClInclude Include="Include\chatterbox_server.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

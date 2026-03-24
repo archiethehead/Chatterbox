@@ -22,5 +22,8 @@
     <ClInclude Include="Include\chatterbox_server.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\chatterbox_data.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

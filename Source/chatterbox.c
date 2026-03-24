@@ -1,4 +1,6 @@
+
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define BLUE(string) "\x1b[34m"string "\x1b[0m" 
 
 #include "chatterbox_client.h"
 #include "chatterbox_server.h"
@@ -10,8 +12,8 @@
 // TODO:
 // 
 // structs
+// UDP broadcasting
 // test pass on many machine
-// I <3 my GF
 
 int main(int argc, char *argv[]) {
 
@@ -22,7 +24,7 @@ int main(int argc, char *argv[]) {
 		if (setName == 0 && argc > 2) {
 
 
-			int success = SetEnvironmentVariableW((LPCWSTR)"ChatterBoxName", (LPCWSTR)argv[2]);
+			int success = SetEnvironmentVariableA("ChatterBoxName", argv[2]);
 
 			if (success == 0) {
 
@@ -31,7 +33,29 @@ int main(int argc, char *argv[]) {
 
 			}
 
-			printf("New name successfully set: %s", argv[2]);
+			printf("\nNew name successfully set: %s\n", argv[2]);
+			return 0;
+
+		}
+
+		int help = strcmp(argv[1], "help");
+
+		if (help == 0) {
+			
+			printf("\nWelcome to Chatterbox!\n\n\
+Because Chatterbox is added to your system path as per the installer specifications, Chatterbox is very\n\
+easy to use. Simply open your system terminal, and type Chatterbox to open the messaging on your local\n\
+network. Messages stay between you, and whoever else on your local network is logged on.\n\n\
+Commands:\nsetname - type the identity you wish to use as the argument for this.\n\
+colour - type the name of the colour you wish to use for your name. If it is supported, it will save\n\
+help - outputs instructions on how to use Chatterbox.\n");
+			return 0;
+		
+		}
+
+		else {
+
+			printf("\n'%s' is not a recognised Chatterbox command - try 'Chatterbox help'\n", argv[1]);
 			return 0;
 
 		}
