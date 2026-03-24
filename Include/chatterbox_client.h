@@ -14,8 +14,7 @@ void recieveMessage(SOCKET* newSocket) {
 
 		if (recievedBytes > 0) {
 
-			printf("\n%s\n", messageBuffer);
-			printf(" > ");
+			printf("\n\n%s\n\n > ", messageBuffer);
 			fflush(stdout);
 
 		}

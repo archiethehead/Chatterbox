@@ -12,9 +12,7 @@ SOCKET clientList[10];
 
 void clientListener(SOCKET *socketPtr) {
 
-	clientCount += 1;
-
-	SOCKET clientSocket = *(SOCKET*)socketPtr;
+	SOCKET clientSocket = *socketPtr;
 	char messageBuffer[1024];
 
 	while (1) {
@@ -53,7 +51,7 @@ void clientListener(SOCKET *socketPtr) {
 void relay(SOCKET* listenSocketPtr) {
 
 	InitializeCriticalSection(&clientCriticalSection);
-	SOCKET listenSocket = *(SOCKET*)listenSocketPtr;
+	SOCKET listenSocket = *listenSocketPtr;
 
 	while (1) {
 	
@@ -65,7 +63,7 @@ void relay(SOCKET* listenSocketPtr) {
 
 		int addressLength = sizeof(clientAddress);
 
-		SOCKET newClientSocket = accept(listenSocket, (struct sockaddr_in*)&clientAddress, &addressLength);
+		SOCKET newClientSocket = accept(listenSocket, (struct sockaddr*)&clientAddress, &addressLength);
 		
 		if (newClientSocket != INVALID_SOCKET) {
 
@@ -74,6 +72,9 @@ void relay(SOCKET* listenSocketPtr) {
 				EnterCriticalSection(&clientCriticalSection);
 
 				clientList[clientCount] = newClientSocket;
+				clientCount += 1;
+				printf("\n\nSERVER - New client connected! Client Count: %d\n\n > ", clientCount);
+
 				_beginthread(clientListener, 0, &newClientSocket);
 
 				LeaveCriticalSection(&clientCriticalSection);
